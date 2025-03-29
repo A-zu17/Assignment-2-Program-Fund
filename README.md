@@ -139,6 +139,68 @@ Payment 1: $400.0, Method: Credit Card, Status: Completed
 
 
 # Code 2;Checking
+class Guest:
+    def __init__(self, name, contact):
+        self.name = name
+        self.contact = contact
+
+    def get_name(self):
+        return self.name
+
+    def get_contact(self):
+        return self.contact
+
+
+class Room:
+    def __init__(self, room_number, room_type, price):
+        self.room_number = room_number
+        self.room_type = room_type
+        self.price = price
+        self.available = True
+
+    def is_available(self):
+        return self.available
+
+    def book_room(self):
+        self.available = False
+
+    def get_price(self):
+        return self.price
+
+
+class Booking:
+    def __init__(self, booking_id, guest, room, check_in, check_out):
+        self.booking_id = booking_id
+        self.guest = guest
+        self.room = room
+        self.check_in = check_in
+        self.check_out = check_out
+        self.status = "Confirmed"
+
+    def get_status(self):
+        return self.status
+
+    def generate_invoice(self):
+        # Assuming the check-in and check-out dates are in "YYYY-MM-DD" format
+        check_in_day = int(self.check_in.split('-')[2])
+        check_out_day = int(self.check_out.split('-')[2])
+        nights = check_out_day - check_in_day
+        total_amount = nights * self.room.get_price()
+        return {"total_amount": total_amount}
+
+
+class Payment:
+    def __init__(self, payment_id, amount, payment_method):
+        self.payment_id = payment_id
+        self.amount = amount
+        self.payment_method = payment_method
+        self.status = "Completed"
+
+    def get_status(self):
+        return self.status
+
+# Test cases
+
 # Test Case 1: Testing Guest Creation
 guest1 = Guest("Alyazia", "alyazia@example.com")
 assert guest1.get_name() == "Alyazia"
@@ -164,12 +226,20 @@ payment1 = Payment(1, room1.get_price() * 4, "Credit Card")
 assert payment1.get_status() == "Completed"  # Payment status should be 'Completed'
 print("Test 4 Passed: Payment processed successfully.")
 
-output: 
-Test 1 Passed: Guest created successfully.
-Test 2 Passed: Room availability checked.
-Test 3 Passed: Booking created successfully.
-Test 4 Passed: Payment processed successfully.
+# Test Case 5: Searching for Available Rooms
+room1 = Room(101, "Single", 100.0)
+room2 = Room(102, "Double", 150.0)
+room1.book_room()  # Book room 101 to make it unavailable
+available_rooms = [room for room in [room1, room2] if room.is_available()]
+assert len(available_rooms) == 1  # Only room 102 should be available
+print("Test 5 Passed: Searching for available rooms.")
 
+# Test Case 6: Invoice Generation for Booking
+room2 = Room(102, "Double", 150.0)
+booking1 = Booking(1, guest1, room2, "2024-04-01", "2024-04-05")
+invoice = booking1.generate_invoice()
+assert invoice["total_amount"] == 600  # Example calculation (4 nights * 150)
+print("Test 6 Passed: Invoice generated.")
 
 # Code 3;Grouping: 
 
